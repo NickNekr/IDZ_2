@@ -1,5 +1,7 @@
 from copy import deepcopy
 from functools import reduce
+
+
 class MatrixError(BaseException):
     def __init__(self, matrix1_, matrix2_):
         self.matrix1 = matrix1_
@@ -84,37 +86,7 @@ class Matrix(object):
             return self * \
                    Matrix((self * self).lines).__pow__((power - 1) // 2)
 
-    def solve(self):
-        ans = []
-        matrix_slau = self.lines[:]
-        for i in range(len(matrix_slau)):
-            matrix_slau = matrix_slau[:i] + \
-                          sorted(matrix_slau[i:],
-                                 key=lambda x: x[i] == 0)
-            if matrix_slau[i][i] != 0:
-                matrix_slau[i] = list(map(lambda x: round(x, 6),
-                    map(lambda x: x * float((1 /
-                                             matrix_slau[i][i])),
-                        matrix_slau[i])))
-            for j in range(i + 1, len(matrix_slau)):
-                matrix_slau[j] = list(map(lambda x: round(x, 6),[j + i for j, i in
-                                  zip(matrix_slau[j],
-                                      map(
-                                          lambda x:
-                                          x * ((-1) *
-                                               matrix_slau[j][i]),
-                                          matrix_slau[i]))]))
-        for i in range(len(matrix_slau) - 1, 0, -1):
-            if matrix_slau[i][:-1] == [0] * (len(matrix_slau[i]) - 1) and matrix_slau[i][-1] != 0:
-                return 'No solution'
-            for j in range(0, i):
-                matrix_slau[j] = list(map(lambda x: round(x, 6),[j + i for j, i in zip(map(lambda x: x * (-1) * matrix_slau[j][i],matrix_slau[i]), matrix_slau[j])]))
-        for i in range(len(matrix_slau)):
-            ans.append([(str(-j) + 'x' + str(x)) if j != 0 else None for x, j in zip(range(i + 2, len(matrix_slau[i])),matrix_slau[i][i + 1:-1])] + [matrix_slau[i][-1]])
-        ans = [i if i != [0] else ['x' + str(ans.index(i) + 1)] for i in ans]
-        ans = [list(filter(lambda x: x is not None, i)) for i in ans]
-        return Matrix(ans)
-
+        
     def stepped(self):
         P = []
         matrix_slau = self.lines[:]
